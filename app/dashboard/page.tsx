@@ -209,56 +209,88 @@ const handlePlayerEnd = () => {
       .catch(() => toast.error("Failed to copy link. Please try again."));
   };
 
-  const handleVote = async (songId: string, isUpvote: boolean) => {
-	  try {
-		// Optimistic UI update
-		setUpcomingSongs((prev) =>
-		  prev
-		    .map((song) =>
-		      song.id === songId
-		        ? {
-		            ...song,
-		            upvotes: isUpvote ? song.upvotes + 1 : song.upvotes,
-		            haveUpvoted: !song.haveUpvoted,
-		          }
-		        : song
-		    )
-		    .sort((a, b) => b.upvotes - a.upvotes)
-		);
+ const handleVote = async (songId: string, isUpvote: boolean) => {
+ //console.log("Voting on", Song.id, isUpvote);
+  try {
+    // Optimistic UI update
+    setUpcomingSongs((prev) =>
+      prev
+        .map((song) =>
+          song.id === songId
+            ? {
+                ...song,
+                upvotes: isUpvote ? song.upvotes + 1 : song.upvotes,
+                haveUpvoted: !song.haveUpvoted,
+              }
+            : song
+        )
+        .sort((a, b) => b.upvotes - a.upvotes)
+    );
 
-		const response = await fetch("/api/streams/upvote", {
-		  method: "POST",
-		  headers: { "Content-Type": "application/json" },
-		  body: JSON.stringify({ streamId: songId }),
-		});
+    const response = await fetch("/api/streams/upvote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // ✅ ensures session cookie is sent
+      body: JSON.stringify({ streamId: songId }),
+    });
 
-		const responseData = await response.json();
-		if (!response.ok) {
-		  throw new Error(responseData.message || "Failed to upvote");
-		}
+    const text = await response.text(); // get raw response
+    let responseData: any = {};
 
-		await refreshStreams();
-	  } catch (error) {
-		console.error("Error while upvoting:", error);
+    try {
+      responseData = JSON.parse(text); // try to parse JSON
+    } catch (e) {
+      console.warn("Server did not return valid JSON:", text);
+    }
 
-		// Revert optimistic update on failure
-		setUpcomingSongs((prev) =>
-		  prev
-		    .map((song) =>
-		      song.id === songId
-		        ? {
-		            ...song,
-		            upvotes: isUpvote ? song.upvotes - 1 : song.upvotes,
-		            haveUpvoted: !song.haveUpvoted,
-		          }
-		        : song
-		    )
-		    .sort((a, b) => b.upvotes - a.upvotes)
-		);
+    console.log("Response status:", response.status);
+    console.log("Response body:", responseData);
 
-		toast.error("Failed to upvote. Please try again.");
-	  }
-	};
+    if (!response.ok) {
+      console.error("Upvote failed with status:", response.status);
+      console.error("Error details:", responseData);
+      throw new Error(responseData.message || "Failed to upvote");
+    }
+
+    // If upvote succeeds, proceed with refresh
+    await refreshStreams();
+  } catch (error: any) {
+    console.error("Error while upvoting:", error);
+
+    if (error instanceof Error) {
+      if (error.message.includes("Failed to fetch")) {
+        console.error("Network error occurred while trying to fetch data.");
+      } else if (error.message.includes("Unexpected end of JSON input")) {
+        console.error("Server responded with incomplete or invalid JSON.");
+      } else {
+        console.error("An unknown error occurred:", error.message);
+      }
+    } else {
+      console.error("Unexpected error:", error);
+    }
+
+    // Revert optimistic update on failure
+    setUpcomingSongs((prev) =>
+      prev
+        .map((song) =>
+          song.id === songId
+            ? {
+                ...song,
+                upvotes: isUpvote ? song.upvotes - 1 : song.upvotes,
+                haveUpvoted: !song.haveUpvoted,
+              }
+            : song
+        )
+        .sort((a, b) => b.upvotes - a.upvotes)
+    );
+
+    toast.error("Failed to upvote. Please try again.");
+  }
+};
+
+
 
 
   return (
@@ -348,6 +380,7 @@ const handlePlayerEnd = () => {
                     <img src={song.thumbnail} alt={song.title} className="w-12 h-12 object-cover" />
                     <span className="text-white">{song.title}</span>
                   </div>
+                  console.log(song);
                   <Button
                     onClick={() => handleVote(song.id, true)}
                     disabled={song.haveUpvoted}
