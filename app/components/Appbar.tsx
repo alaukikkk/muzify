@@ -26,12 +26,6 @@ const session = useSession();
               >
                 How It Works
               </Link>
-              <Link
-                href="#pricing"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-              >
-                Pricing
-              </Link>
               {session.data?.user && <Button className="gap-1 bg-purple-600 hover:bg-purple-700" onClick={()=> signOut()}>Logout</Button> }
               {!session.data?.user && <Button className="gap-1 bg-purple-600 hover:bg-purple-700" onClick={()=> signIn()}>Signin</Button> }
             </nav>

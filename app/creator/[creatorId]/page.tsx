@@ -1,15 +1,5 @@
-import React from 'react';
+import Dashboard from "@/app/dashboard/page.tsx"; // update the path if needed
 
-interface PageProps {
-  params: {
-    creatorId: string;
-  };
-}
-
-export default function CreatorPage({ params }: PageProps) {
-  return (
-    <div>
-      <h1>Creator ID: {params.creatorId}</h1>
-    </div>
-  );
+export default function CreatorPage({ params }: { params: { creatorId: string } }) {
+  return <Dashboard creatorId={params.creatorId} />;
 }

@@ -28,14 +28,20 @@ interface Song {
   videoId: string | null;
 }
 
-export default function Dashboard() {
+interface DashboardProps {
+  creatorId?: string;
+}
+
+export default function Dashboard({ creatorId }: DashboardProps) {
+
   const { data: session } = useSession();
+  const userId = creatorId || session?.user?.id;
   const [youtubeLink, setYoutubeLink] = useState("");
   const [videoId, setVideoId] = useState<string | null>(null);
   const [nowPlaying, setNowPlaying] = useState<Song | null>(null);
   var [upcomingSongs, setUpcomingSongs] = useState<Song[]>([]);
 
-  const REFRESH_INTERVAL_MS = 10 * 1000;
+  const REFRESH_INTERVAL_MS = 0.001 * 1000;
   const handlePlayerReady = (event: any) => {
     console.log("Player is ready");
     // You can access the YouTube player instance here
@@ -46,10 +52,10 @@ export default function Dashboard() {
   };
 
   async function refreshStreams() {
-	  if (!session?.user?.id) return;
+	  if (!userId) return;
 
 	  try {
-		const res = await axios.get(`/api/streams?creatorId=${session.user.id}`, {
+		const res = await axios.get(`/api/streams?creatorId=${userId}`, {
 		  withCredentials: true,
 		});
 
@@ -91,7 +97,7 @@ export default function Dashboard() {
     refreshStreams();
     const interval = setInterval(refreshStreams, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [session?.user?.id]);
+  }, [userId]);
 
   useEffect(() => {
     const match = youtubeLink.match(YT_REGEX);
@@ -104,7 +110,7 @@ export default function Dashboard() {
       return;
     }
 
-    if (!session?.user?.id) {
+    if (!userId) {
       toast.error("You need to be logged in to add a song!");
       return;
     }
@@ -114,7 +120,7 @@ export default function Dashboard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          creatorId: session.user.id,
+          creatorId: userId,
           url: youtubeLink,
         }),
       });
@@ -198,11 +204,11 @@ const handlePlayerEnd = () => {
 
 
   const handleShare = () => {
-    if (!session?.user?.id) {
+    if (!userId) {
       toast.error("You need to be logged in to share!");
       return;
     }
-    const shareableLink = `${window.location.protocol}//${window.location.hostname}/creator/${session.user.id}`;
+    const shareableLink = `${window.location.protocol}//${window.location.hostname}/creator/${userId}`;
     navigator.clipboard
       .writeText(shareableLink)
       .then(() => toast.success("Link copied to clipboard!"))
@@ -380,15 +386,6 @@ const handlePlayerEnd = () => {
                     <img src={song.thumbnail} alt={song.title} className="w-12 h-12 object-cover" />
                     <span className="text-white">{song.title}</span>
                   </div>
-                  console.log(song);
-                  <Button
-                    onClick={() => handleVote(song.id, true)}
-                    disabled={song.haveUpvoted}
-                    className={song.haveUpvoted ? "bg-gray-600 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"}
-                  >
-                    <ThumbsUp className="mr-2 h-4 w-4" />
-                    {song.upvotes}
-                  </Button>
                 </div>
               ))}
             </div>

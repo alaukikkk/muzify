@@ -27,12 +27,12 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                
+              <a href="/api/auth/signin?callbackUrl=http%3A%2F%2Flocalhost%3A3000%2F"> 
                   <Button size="lg" className="gap-1 bg-purple-600 hover:bg-purple-700">
                     Get Started <ChevronRight className="h-4 w-4" />
                   </Button>
-                  <Button size="lg" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-50">
-                    See Demo
-                  </Button>
+                  </a>
                 </div>
               </div>
               <div className="mx-auto flex items-center justify-center">
@@ -186,90 +186,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-purple-100">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <div className="inline-block rounded-lg bg-purple-600 px-3 py-1 text-sm text-white">Pricing</div>
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Simple, Transparent Pricing</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Choose the plan that works best for your music needs.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-3 lg:gap-8">
-              {[
-                {
-                  title: "Free",
-                  price: "$0",
-                  description: "Perfect for trying out Muzify",
-                  features: [
-                    "Up to 50 songs in library",
-                    "Up to 25 concurrent listeners",
-                    "Basic analytics",
-                    "Muzify branding",
-                  ],
-                },
-                {
-                  title: "Pro",
-                  price: "$19",
-                  description: "For growing creators",
-                  features: [
-                    "Up to 500 songs in library",
-                    "Up to 100 concurrent listeners",
-                    "Advanced analytics",
-                    "Custom branding",
-                    "Priority support",
-                  ],
-                  highlighted: true,
-                },
-                {
-                  title: "Premium",
-                  price: "$49",
-                  description: "For professional creators",
-                  features: [
-                    "Unlimited songs in library",
-                    "Unlimited concurrent listeners",
-                    "Comprehensive analytics",
-                    "Custom branding",
-                    "Priority support",
-                    "API access",
-                  ],
-                },
-              ].map((plan, i) => (
-                <div
-                  key={i}
-                  className={`flex flex-col rounded-lg border ${
-                    plan.highlighted ? "border-purple-500 shadow-lg" : "border-border"
-                  } bg-background p-6`}
-                >
-                  <div className="mb-4">
-                    <h3 className="text-xl font-bold">{plan.title}</h3>
-                    <div className="mt-2 flex items-baseline">
-                      <span className="text-3xl font-bold">{plan.price}</span>
-                      <span className="ml-1 text-muted-foreground">/month</span>
-                    </div>
-                    <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
-                  </div>
-                  <ul className="mb-6 flex-1 space-y-2">
-                    {plan.features.map((feature, j) => (
-                      <li key={j} className="flex items-center">
-                        <ChevronRight className="mr-2 h-4 w-4 text-primary" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    className={plan.highlighted ? "" : "bg-muted text-muted-foreground hover:bg-muted/80"}
-                    variant={plan.highlighted ? "default" : "outline"}
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="w-full py-12 md:py-24 lg:py-32 bg-purple-gradient-light">
           <div className="container grid items-center justify-center gap-4 px-4 text-center md:px-6">
@@ -283,12 +199,18 @@ export default function LandingPage() {
             </div>
             <div className="mx-auto w-full max-w-sm space-y-2">
               <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center">
+              <a href="/api/auth/signin?callbackUrl=http%3A%2F%2Flocalhost%3A3000%2F"> 
                 <Button size="lg" className="gap-1">
                   Get Started <ChevronRight className="h-4 w-4" />
                 </Button>
+               
+                </a>
+                
+              <a href="mailto:alaukikpatel232@gmail.com"> 
                 <Button size="lg" variant="outline">
                   Contact Sales
                 </Button>
+                </a>
               </div>
             </div>
           </div>
@@ -304,15 +226,7 @@ export default function LandingPage() {
             © {new Date().getFullYear()} Muzify. All rights reserved.
           </p>
           <nav className="flex gap-4 sm:gap-6">
-            <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Terms
-            </Link>
-            <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Privacy
-            </Link>
-            <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Contact
-            </Link>
+            
           </nav>
         </div>
       </footer>
